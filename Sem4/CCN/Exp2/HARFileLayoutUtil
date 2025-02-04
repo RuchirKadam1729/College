@@ -1,0 +1,27 @@
+a single HAR file layout:
+
+JSON object    
+    log
+        pages: page list
+            page
+                pageTimings
+                    onContentLoad
+                    onLoad
+        entries: entry list
+            entry
+                response
+                    status
+                    content
+                        mimeType
+                        size
+                        text
+                timings 
+                    blocked
+                    dns
+                    connect
+                    ssl
+                    send
+                    wait
+                    receive
+                time
+                
