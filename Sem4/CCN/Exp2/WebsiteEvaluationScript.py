@@ -43,7 +43,6 @@ def check404(harfile):
 
 def avgTTFB(harFile):
     return mean([entry['timings'].get('wait',0) for entry in entries(harFile)])
-0, 30.533333333333335, 1913, 73, text/html; charset=utf-8                      19510.0
 
 def avgDOMLoadTime(harFile):
     return mean([page['pageTimings']['onContentLoad'] for page in pages(harFile)])
@@ -62,9 +61,20 @@ def sizePerMimeType(harFile):
     .replace(0, pd.NA).aggregate('mean')
     )
 
+def evaluateAllTimings(harFile):
+    entries1 = entries(harFile)
+    def helper1(access):
+        return mean([entry['timings'].get(access, 0) for entry in entries1]) 
+    
+    list1 = ['blocked', 'dns', 'connect', 'ssl', 'send', 'wait', 'receive']
+    col1 = ['onContentLoad', 'onLoad']+list1
+    col2 = [avgLoadTime(harFile),avgDOMLoadTime(harFile)]+list(map(lambda x:helper1(x),list1))
+    print(pd.DataFrame({'timing':col1,'mean val':col2}))
 
 funcs = [avgLoadTime,loadTimePerMimeType,check404,avgTTFB,avgDOMLoadTime,avgRenderTime,sizePerMimeType]
 
 processed = [func('har/desmos.har') for func in funcs]
 
-print(processed)
+#print(processed)
+
+print(evaluateAllTimings('har/desmos.har'))
