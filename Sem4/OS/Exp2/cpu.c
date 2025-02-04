@@ -1,0 +1,58 @@
+#include<stdio.h>
+#include"board.c"
+enum LeftRight {LEFT,RIGHT};
+struct cpuInfo {
+    int guess;
+    int lastGuess;
+    enum HotCold temp;
+    enum LeftRight lastTurn;
+    int p; //range
+    int r;
+};
+
+struct cpuInfo cpuGuess(struct cpuInfo cpuInfo) 
+{
+    if (cpuInfo.temp==HOT && cpuInfo.lastTurn==LEFT ||
+        cpuInfo.temp==COLD && cpuInfo.lastTurn==RIGHT)
+    {
+        cpuInfo.r = (cpuInfo.p+cpuInfo.r)/2;
+    }
+    else
+    {
+        cpuInfo.p = (cpuInfo.p+cpuInfo.r)/2;
+    }
+
+    int q = (cpuInfo.p+cpuInfo.r)/2;
+
+    int choice = randInRange(0,1);
+    cpuInfo.lastTurn = (choice=0)? LEFT : RIGHT;
+    
+    int guess = (choice==0)? randInRange(cpuInfo.p,q-1) : randInRange(q+1,cpuInfo.r);
+
+    cpuInfo.temp = acceptGuess(guess, cpuInfo.lastGuess);
+
+    cpuInfo.lastGuess = cpuInfo.guess;
+    cpuInfo.guess = guess;
+    return cpuInfo;
+}
+
+void printCpu(struct cpuInfo cpu) {
+    printf("guess = %d;lastGuess = %d;temp = %s;lastTurn = %s;p = %d;r = %d;", cpu.guess,cpu.lastGuess,cpu.temp==HOT? "HOT":"COLD",cpu.lastTurn==LEFT? "LEFT":"RIGHT",cpu.p,cpu.r);
+}
+
+int main(int argc, char const *argv[])
+{
+    struct cpuInfo cpu1 = {100, 100, HOT, LEFT, 0, 200};
+    
+    generateNum();
+    while (cpu1.temp != WIN)
+    {
+        printCpu(cpu1);
+        cpu1 = cpuGuess(cpu1);
+        
+        printf("\n");
+        printf("actual number is: %d\n",globalVarNum);
+    }
+    printf("CPU Wins!");
+    return 0;
+}
