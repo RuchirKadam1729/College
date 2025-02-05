@@ -1,0 +1,1 @@
+void playCvC(int trials);

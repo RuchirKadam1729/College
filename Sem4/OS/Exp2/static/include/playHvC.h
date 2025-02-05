@@ -1,0 +1,1 @@
+void playHvC(int trials);
