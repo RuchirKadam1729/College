@@ -124,6 +124,6 @@ int main(int anglec, char const *anglev[])
         push(&s, points[i]);
     }
     
-    print_stack(s);
+    print_point_arr(s.arr,s.top+1);
     return 0;
 }
