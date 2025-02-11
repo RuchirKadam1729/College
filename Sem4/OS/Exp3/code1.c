@@ -3,7 +3,6 @@
 #include<sys/types.h>
 #include<sys/wait.h>
 
-
 int main()
 {
     pid_t b1 = 1, b2 = 1, b3 = 1, b4 = 1;
