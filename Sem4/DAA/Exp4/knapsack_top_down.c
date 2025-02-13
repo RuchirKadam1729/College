@@ -3,7 +3,7 @@
 #include "print_table.c"
 #define LEN(A) sizeof(A) / sizeof(A[0])
 #define MAX(X, Y) (X >= Y ? X : Y)
-#define SIZE 500
+
 #define PRINT(X) printf("%d\n", X)
 #define PRINTARR(A)                                       \
     for (size_t i = 0; i < sizeof(A) / sizeof(A[0]); i++) \
@@ -11,7 +11,7 @@
         printf("%d ", A[i]);                              \
     }                                                     \
     printf("\n")
-#define MAXW 50
+#define MAXW 80
 
 int memo_accesses = 0;
 
@@ -45,19 +45,15 @@ int max_price_top_down(int N, int W, int price[], int weight[], int max_price[][
 
 int memoized_max_price(int k, int w, int price[], int weight[], int max_price[][MAXW + 1], int choice[][MAXW + 1])
 {
-    if (k == 0 || w == 0)
-    {
-        max_price[k][w] = 0;
-        choice[k][w] = 0;
+    if (k < 0)
         return 0;
-    }
 
     if (max_price[k][w] >= 0)
     {
         memo_accesses += 1;
         return max_price[k][w];
     }
-
+    
     int case1 = price[k] + memoized_max_price(k - 1, w - weight[k], price, weight, max_price, choice);
 
     int case2 = memoized_max_price(k - 1, w, price, weight, max_price, choice);
@@ -73,10 +69,10 @@ int memoized_max_price(int k, int w, int price[], int weight[], int max_price[][
 
 int main()
 {
-    int price[] = {60, 100, 120};
-    int weight[] = {10, 20, 30};
-    int N = 3;
-    int W = 50;
+    int price[] = {60, 100, 120, 78, 34, 72, 59, 28, 25, 46, 36, 90};
+    int weight[] = {10, 20, 30, 40, 50, 60, 1, 80, 70, 30, 35, 23};
+    int N = LEN(price);
+    int W = 80;
 
     int max_price[N][MAXW + 1];
     int choice[N][MAXW + 1];
@@ -116,6 +112,6 @@ int main()
     printf("memo accesses: %d\n", memo_accesses);
 
     printf("memoized array:\n");
-    print_table(N, W + 1, max_price, 4);
+    print_table(N, MAXW + 1, max_price, 4);
     printf("\n");
 }

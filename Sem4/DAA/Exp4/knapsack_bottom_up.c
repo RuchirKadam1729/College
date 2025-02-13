@@ -47,10 +47,10 @@ int max_price_bottom_up(int N, int W, int price[], int weight[], int max_price[]
 
 int main()
 {
-    int price[] = {60, 100, 120};
-    int weight[] = {10, 20, 30};
-    int N = 3;
-    int W = 50;
+    int price[] = {60, 100, 120, 78, 34, 72, 59, 28, 25, 46, 36, 90};
+    int weight[] = {10, 20, 30, 40, 50, 60, 1  , 80, 70, 30, 35, 23};
+    int N = LEN(price);
+    int W = 80;
 
     int max_price[N][W + 1];
     int choice[N][W + 1];
