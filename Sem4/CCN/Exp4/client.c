@@ -11,12 +11,11 @@ int main(int argc, char *argv[])
     struct addrinfo hints, *res;
     hints.ai_socktype = SOCK_STREAM;
     hints.ai_family = AF_INET6;
-    hints.ai_flags = AI_PASSIVE;
-    
-    getaddrinfo(NULL, "3490", &hints, &res);
+
+    getaddrinfo("fe80::873f:ef2c:c923:9029", "3490", &hints, &res);
 
     int sockfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
-    
+
     bind(sockfd, res->ai_addr, res->ai_addrlen);
 
     int yes = 1;
@@ -25,19 +24,10 @@ int main(int argc, char *argv[])
         perror("setsockopt");
         exit(1);
     }
-    listen(sockfd, 10);
-
-    int fd1 = accept(sockfd, res->ai_addr, res->ai_addrlen);
-
-    send(fd1, "lol",strlen("lol"),0);
+    connect(sockfd, res->ai_addr, res->ai_addrlen);
 
     char buffer[100];
-    while (recv(fd1, buffer, 100, 0) > 0)
-    {
-        printf("%s", buffer);
-    }
-    
-    
-
+    recv(sockfd, buffer, 100,0);
+    send(sockfd, "hi from client", 100, 0);
     return 0;
 }
