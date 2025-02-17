@@ -17,7 +17,7 @@ int main(int argc, char **argv)
     wait(NULL);
     
     if (pid == 0)
-        execl("/usr/bin/gcc", "gcc", source_code_name, "-o", output_file_name,NULL);
+        execl("/usr/bin/gcc", "gcc", source_code_name, "-fsanitize=address", "-o",output_file_name,NULL);
     else
         execl(output_file_name, "NULL");
 }
