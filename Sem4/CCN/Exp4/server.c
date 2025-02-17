@@ -1,3 +1,6 @@
+/*
+** server.c -- a stream socket server demo
+*/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -18,6 +21,8 @@
 
 void sigchld_handler(int s)
 {
+    (void)s; // quiet unused variable warning
+
     // waitpid() might overwrite errno, so we save and restore it:
     int saved_errno = errno;
 
@@ -139,3 +144,4 @@ int main(void)
     }
 
     return 0;
+}

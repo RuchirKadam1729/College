@@ -1,3 +1,7 @@
+/*
+** client.c -- a stream socket client demo
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -33,12 +37,17 @@ int main(int argc, char *argv[])
     int rv;
     char s[INET6_ADDRSTRLEN];
 
+    if (argc != 2)
+    {
+        fprintf(stderr, "usage: client hostname\n");
+        exit(1);
+    }
 
     memset(&hints, 0, sizeof hints);
     hints.ai_family = AF_UNSPEC;
     hints.ai_socktype = SOCK_STREAM;
 
-    if ((rv = getaddrinfo("::1", PORT, &hints, &servinfo)) != 0)
+    if ((rv = getaddrinfo(argv[1], PORT, &hints, &servinfo)) != 0)
     {
         fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
         return 1;
@@ -56,8 +65,8 @@ int main(int argc, char *argv[])
 
         if (connect(sockfd, p->ai_addr, p->ai_addrlen) == -1)
         {
-            close(sockfd);
             perror("client: connect");
+            close(sockfd);
             continue;
         }
 
@@ -75,7 +84,7 @@ int main(int argc, char *argv[])
     printf("client: connecting to %s\n", s);
 
     freeaddrinfo(servinfo); // all done with this structure
-    free(servinfo);
+
     if ((numbytes = recv(sockfd, buf, MAXDATASIZE - 1, 0)) == -1)
     {
         perror("recv");
