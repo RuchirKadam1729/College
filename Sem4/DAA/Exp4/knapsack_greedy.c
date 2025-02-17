@@ -34,9 +34,12 @@ int compare_by_ratio(const void *a, const void *b)
         item2 = *(struct item *)b;
 
     double val = ratio(item1) - ratio(item2);
-    if (val == 0) return 0;
-    if (val > 0) return -1;
-    if (val < 0) return 1;
+    if (val == 0)
+        return 0;
+    if (val > 0)
+        return -1;
+    if (val < 0)
+        return 1;
 }
 
 struct knapsack
@@ -60,13 +63,14 @@ double knapsack_greedy(struct item item[], struct knapsack knapsack)
 {
     int w = knapsack.W;
     int i = 0;
+
     while (i < knapsack.N && w >= item[i].weight)
     {
         knapsack.item[i] = item[i];
         w -= item[i].weight;
         i++;
     }
-
+    
     if (i < knapsack.N && w > 0)
     {
         double frac = w / item[i].weight;
@@ -79,25 +83,29 @@ double knapsack_greedy(struct item item[], struct knapsack knapsack)
 
 int main()
 {
-    int N = 3;
-    double W = 20;
-    double price[] = {25, 24, 15};
-    double weight[] = {18, 15, 10};
+    int N = 12;
+    double W = 50;
+    double price[N];
+    double weight[N];
     struct item item[N];
     struct item knapsack_items[N];
     struct knapsack knapsack = {.item = knapsack_items, .N = N, .W = W};
+
+    for (size_t i = 0; i < N; i++)
+    {
+        price[i] = rand() % 100;
+        weight[i] = rand() % 100;
+    }
+
     assign_price_and_weight(item, price, weight, N);
-
-    for (size_t i = 0; i < N; i++)
-        print(item[i], ' ');
-
-    qsort(item, N, sizeof(item[0]), compare_by_ratio);
     
-    printf("\n");
+    qsort(item, N, sizeof(item[0]), compare_by_ratio);
+
+    
     for (size_t i = 0; i < N; i++)
         print(item[i], ' ');
+    printf("\n");
     double price1 = knapsack_greedy(item, knapsack);
+    
     printf("\nprice1: %lf\n", price1);
-
-
 }
