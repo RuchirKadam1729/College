@@ -1,7 +1,3 @@
-/*
-** client.c -- a stream socket client demo
-*/
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -11,14 +7,13 @@
 #include <sys/types.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
-
 #include <arpa/inet.h>
 
-#define PORT "3490" // the port client will be connecting to
+#define PORT "3490" 
 
-#define MAXDATASIZE 100 // max number of bytes we can get at once
+#define MAXDATASIZE 5000
 
-// get sockaddr, IPv4 or IPv6:
+
 void *get_in_addr(struct sockaddr *sa)
 {
     if (sa->sa_family == AF_INET)
@@ -53,7 +48,6 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    // loop through all the results and connect to the first we can
     for (p = servinfo; p != NULL; p = p->ai_next)
     {
         if ((sockfd = socket(p->ai_family, p->ai_socktype,
@@ -83,8 +77,12 @@ int main(int argc, char *argv[])
               s, sizeof s);
     printf("client: connecting to %s\n", s);
 
-    freeaddrinfo(servinfo); // all done with this structure
+    freeaddrinfo(servinfo);
 
+    char *msg = "I've decided that my attention span is so short that I can't actually write approximately 800 words on any one topic. So, instead of writing on semi-related topics and badly joining them together with opening and closing transition sentences, I've decided to write about two random topics, dedicating a paragraph to each. Or rather, several paragraphs each, after my editors are done with it. Or maybe they'll be done with that last sentence and this one as well.\n";
+    int size = strlen(msg);
+    printf("%s", msg);
+    send(sockfd, msg, size, 0);
     if ((numbytes = recv(sockfd, buf, MAXDATASIZE - 1, 0)) == -1)
     {
         perror("recv");
@@ -93,6 +91,7 @@ int main(int argc, char *argv[])
 
     buf[numbytes] = '\0';
 
+    
     printf("client: received '%s'\n", buf);
 
     close(sockfd);
