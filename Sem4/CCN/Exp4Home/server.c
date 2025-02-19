@@ -148,7 +148,7 @@ int main(void)
 
                 // FILE* connected_users = fopen("connected_users.txt", "r");
                 // char user_sockfd_i[100];
-                // while (fgets(user_sockfd_i, 100, connected_users)) {
+                // while (fget  9s(user_sockfd_i, 100, connected_users)) {
                 //     int user_sock = atoi(user_sockfd_i);
                 //     if (write(user_sock, convo, convo_length) == -1)
                 //         perror("write");

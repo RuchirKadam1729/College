@@ -4,23 +4,23 @@
 
 
 
-[Ruchir]: hi
-
-[Anish]: .
-
-[Anish]: how you doing
-
-[Ruchir]: 
-
-[Ruchir]: I'm fine
-
-[Ruchir]: im fine
-
-[Anish]: ok
-
-[Anish]: good
 
 
+[Santosh]: hi, im santosh
+
+[Ruchir]: hello
+
+[Santosh]: what do you see
+
+[Ruchir]: dsds
+
+[Santosh]: d
+
+[Ruchir]: dsds
+
+
+
+[Santosh]: d
 
 
 
