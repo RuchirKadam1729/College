@@ -84,8 +84,8 @@ double knapsack_greedy(struct item item[], struct knapsack* pknapsack)
 
 int main()
 {
-    int N = 12;
-    double W = 70;
+    int N = 10000;
+    double W = 5000;
     double price[N];
     double weight[N];
     struct item item[N];

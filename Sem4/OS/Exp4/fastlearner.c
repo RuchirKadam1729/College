@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <stdlib.h>
+#include <pthread.h>
+#include <string.h>
+
+struct thread_args
+{
+    int stack_var;
+    int *heap_var;
+};
+
+int *address = NULL;
+
+void *thread_routine1(void *arg)
+{
+    struct thread_args *thread_args = (struct thread_args *)(arg);
+
+    free(address);
+    printf("[thread1]: I just freed the address to a variable you're using, have fun with that.\n");
+    thread_args->stack_var = 2;
+    *thread_args->heap_var = 3;
+
+    printf("[thread1]: stack_var: %d, heap_var: %d\n", thread_args->stack_var, *thread_args->heap_var);
+    pthread_exit(NULL);
+}
+
+void *thread_routine2(void *arg)
+{
+    struct thread_args *thread_args = (struct thread_args *)(arg);
+
+    thread_args->stack_var = 4;
+    sleep(1);
+    *thread_args->heap_var = 3;
+
+    printf("[thread2]: stack_var: %d, heap_var: %d\n", thread_args->stack_var, *thread_args->heap_var);
+    pthread_exit(NULL);
+}
+
+int main(int argc, char const *argv[])
+{
+
+    int stack_var = 1;
+    int *heap_var = malloc(sizeof(int));
+    *heap_var = 0;
+    address = heap_var;
+    struct thread_args thread_args = {.stack_var = stack_var, .heap_var = heap_var};
+    pthread_t thread1, thread2;
+    pthread_create(&thread1, NULL, thread_routine1, &thread_args);
+    pthread_create(&thread2, NULL, thread_routine2, &thread_args);
+    pthread_join(thread1, NULL);
+    pthread_join(thread2, NULL);
+    free(heap_var);
+    return 0;
+}

@@ -1,0 +1,18 @@
+{
+    "files.associations": {
+        "inet.h": "c",
+        "netdb.h": "c",
+        "cmath": "c",
+        "signal.h": "c",
+        "system_error": "c",
+        "text_encoding": "c",
+        "typeinfo": "c",
+        "functional": "c",
+        "array": "cpp",
+        "deque": "cpp",
+        "vector": "cpp",
+        "string_view": "cpp",
+        "span": "cpp",
+        "random": "cpp"
+    }
+}

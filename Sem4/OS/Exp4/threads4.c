@@ -44,15 +44,14 @@ int equals_literal(char *str1, char *str2)
     return equals(str11, str21);
 }
 
-int isdelimiter(char c) {return c==' ' || c=='\n' || c=='\0';}
-
+int isdelimiter(char c) { return c == ' ' || c == '\n' || c == '\0'; }
 
 char *next_word_ptr(char *line)
 {
-    int i=0;
+    int i = 0;
     while (isdelimiter(line[i]) == 0)
         i++;
-    
+
     if (line[i] == '\n' || line[i] == '\0')
         return NULL;
 
@@ -95,12 +94,13 @@ void *pthread_routine(void *arg)
     for (size_t i = 0; i < lines; i++)
     {
         fgets(line, 100, fp);
-        char* lineptr = line;
-        
+        char *lineptr = line;
+
         if (equals(current_word(lineptr), keyword))
             keywordcount_fp_lines->keyword_count->count++;
-        
-        while (next_word_ptr(lineptr) != NULL) {
+
+        while (next_word_ptr(lineptr) != NULL)
+        {
             lineptr = next_word_ptr(lineptr);
 
             if (equals(current_word(lineptr), keyword))
@@ -120,15 +120,15 @@ int main()
     char line[100];
     int lines = 0;
 
-    //first fgets counting all lines in file
+    // first fgets counting all lines in file
     while (fgets(line, 100, fplines))
         lines++;
-    
+
     for (size_t i = 0; i < lines / 2; i++)
         fgets(line, 100, fp2);
-    //Now the fp2 ^ will be at lines/2 th line
+    // Now the fp2 ^ will be at lines/2 th line
 
-    string keyword = STR("When"); 
+    string keyword = STR("When");
     struct keyword_count keyword_count = {keyword, 0};
 
     pthread_t thread_half1, thread_half2;

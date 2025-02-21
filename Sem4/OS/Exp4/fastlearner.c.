@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <stdlib.h>
+#include <pthread.h>
+#include <string.h>
+
+struct thread_args {
+    int var1;
+    int var2;
+};
+
+struct queue {
+    void* job[500];
+    int front;
+    int rear;
+};
+
+struct queue queue()
+{
+    return (struct queue) { .front = 0, .rear = -1 };
+}
+
+struct queue enqueue(struct queue queue, void* job)
+{
+    queue.job[++queue.rear] = job;
+    return queue;
+}
+
+struct queue dequeue(struct queue queue, void* job)
+{
+    *job = *(queue.job[queue.front--]);
+    return queue;
+}
+
+void* thread_routine(void* arg)
+{
+    struct thread_args thread_args = *(struct thread_args*)(arg);
+
+    pthread_exit(NULL);
+}
+
+
+int main(int argc, char const* argv[])
+{
+    //struct thread_args thread_args = { .stack_var = stack_var, .heap_var = heap_var };
+
+    int n_threads = 10;
+
+    pthread_t thread_pool[n_threads];
+    for (size_t i = 0; i < n_threads; i++) {
+        struct thread_args thread_args;
+        pthread_create(thread_pool + i, NULL, thread_routine, &thread_args);
+    }
+
+    for (size_t i = 0; i < n_threads; i++) {
+        pthread_join(thread_pool[i], NULL);
+    }
+
+    return 0;
+}

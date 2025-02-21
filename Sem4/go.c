@@ -15,7 +15,7 @@ int main(int argc, char **argv)
 
     pid_t pid = fork();
     wait(NULL);
-    
+
     if (pid == 0)
         execl("/usr/bin/gcc", "gcc", source_code_name, "-fsanitize=address", "-fsanitize=undefined", "-o", output_file_name, NULL);
     else
