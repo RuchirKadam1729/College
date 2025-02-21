@@ -76,7 +76,7 @@ void *thread_listener(void *arg)
 {
     struct threadargs threadargs = *(struct threadargs *)arg;
     char filename[100];
-    sprintf(filename, "%s%d%s", PORT, rand(), threadargs.name);
+    sprintf(filename, "%s%s", threadargs.name, PORT);
     int sockfd = threadargs.sockfd;
 
     while (1)
@@ -166,6 +166,9 @@ int main(int argc, char *argv[])
     freeaddrinfo(servinfo);
 
     write(sockfd, name, strlen(name));
+    char buf[100];
+    read(sockfd, buf, 100);
+    puts(buf);
     struct threadargs threadargs;
     threadargs.sockfd = sockfd;
     threadargs.name = name;
