@@ -1,14 +1,14 @@
+#include <arpa/inet.h>
+#include <errno.h>
+#include <netdb.h>
+#include <netinet/in.h>
+#include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
-#include <errno.h>
 #include <string.h>
-#include <netdb.h>
-#include <sys/types.h>
-#include <netinet/in.h>
 #include <sys/socket.h>
-#include <pthread.h>
-#include <arpa/inet.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 #define PORT "3490"
 
@@ -18,8 +18,7 @@
 int strlen_newline(char *str)
 {
     int len = 0;
-    while (str[len] != '\n' && str[len] != '\0')
-    {
+    while (str[len] != '\n' && str[len] != '\0') {
         len++;
     }
     return len;
@@ -41,19 +40,16 @@ void write_to_file(const char *filename, const char *str)
 
 void get_file_content(char *buf, const char *filename)
 {
-    char raw_buf[MAXDATASIZE];
+    char  raw_buf[MAXDATASIZE];
     FILE *client_convo_file = fopen(filename, "r");
-    int j = 0;
-    while (fgets(raw_buf, MAXDATASIZE, client_convo_file))
-    {
+    int   j                 = 0;
+    while (fgets(raw_buf, MAXDATASIZE, client_convo_file)) {
         int i = 0;
 
-        while (1)
-        {
+        while (1) {
             if (raw_buf[i] == '\0')
-                continue;
-            if (raw_buf[i] == '\n')
-            {
+                break;
+            if (raw_buf[i] == '\n') {
                 buf[j++] = raw_buf[i];
                 break;
             }
@@ -68,25 +64,25 @@ void get_file_content(char *buf, const char *filename)
 struct threadargs
 {
     pthread_t thread;
-    int sockfd;
-    char *name;
+    int       sockfd;
+    char     *name;
 };
 
-void *thread_listener(void *arg)
+void *thread_listen(void *arg)
 {
     struct threadargs threadargs = *(struct threadargs *)arg;
-    char filename[100];
-    sprintf(filename, "%s%s", threadargs.name, PORT);
+
     int sockfd = threadargs.sockfd;
 
-    while (1)
-    {
-        int numbytes;
+    char filename[100];
+    sprintf(filename, "convos/%s%s", threadargs.name, PORT);
+
+    while (1) {
+        int  numbytes;
         char server_msg[MAXDATASIZE];
 
         memset(server_msg, 0, MAXDATASIZE);
-        if ((numbytes = read(sockfd, server_msg, MAXDATASIZE - 1)) == -1)
-        {
+        if ((numbytes = read(sockfd, server_msg, MAXDATASIZE - 1)) == -1) {
             perror("read");
             pthread_exit(NULL);
         }
@@ -96,7 +92,7 @@ void *thread_listener(void *arg)
         get_file_content(buf, filename);
         system("clear");
         printf("%s", buf);
-    }
+        }
 }
 
 int getname(char name[])
@@ -115,36 +111,31 @@ int main(int argc, char *argv[])
     int sockfd;
 
     struct addrinfo hints, *servinfo, *p;
-    int rv;
-    char s[INET6_ADDRSTRLEN];
+    int             rv;
+    char            s[INET6_ADDRSTRLEN];
 
-    if (argc != 2)
-    {
+    if (argc != 2) {
         fprintf(stderr, "usage: client hostname\n");
         exit(1);
     }
 
     memset(&hints, 0, sizeof hints);
-    hints.ai_family = AF_UNSPEC;
+    hints.ai_family   = AF_UNSPEC;
     hints.ai_socktype = SOCK_STREAM;
 
-    if ((rv = getaddrinfo(argv[1], PORT, &hints, &servinfo)) != 0)
-    {
+    if ((rv = getaddrinfo(argv[1], PORT, &hints, &servinfo)) != 0) {
         fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
         return 1;
     }
 
-    for (p = servinfo; p != NULL; p = p->ai_next)
-    {
-        if ((sockfd = socket(p->ai_family, p->ai_socktype,
-                             p->ai_protocol)) == -1)
-        {
+    for (p = servinfo; p != NULL; p = p->ai_next) {
+        if ((sockfd = socket(p->ai_family, p->ai_socktype, p->ai_protocol))
+            == -1) {
             perror("client: socket");
             continue;
         }
 
-        if (connect(sockfd, p->ai_addr, p->ai_addrlen) == -1)
-        {
+        if (connect(sockfd, p->ai_addr, p->ai_addrlen) == -1) {
             perror("client: connect");
             close(sockfd);
             continue;
@@ -153,28 +144,25 @@ int main(int argc, char *argv[])
         break;
     }
 
-    if (p == NULL)
-    {
+    if (p == NULL) {
         fprintf(stderr, "client: failed to connect\n");
+        perror("client");
         return 2;
     }
 
-    inet_ntop(p->ai_family, get_in_addr((struct sockaddr *)p->ai_addr),
-              s, sizeof s);
+    inet_ntop(
+        p->ai_family, get_in_addr((struct sockaddr *)p->ai_addr), s, sizeof s
+    );
     printf("client: connecting to %s\n", s);
 
     freeaddrinfo(servinfo);
 
     write(sockfd, name, strlen(name));
-    char buf[100];
-    read(sockfd, buf, 100);
-    puts(buf);
     struct threadargs threadargs;
     threadargs.sockfd = sockfd;
-    threadargs.name = name;
-    pthread_create(&threadargs.thread, NULL, thread_listener, &threadargs);
-    while (1)
-    {
+    threadargs.name   = name;
+    pthread_create(&threadargs.thread, NULL, thread_listen, &threadargs);
+    while (1) {
         char client_msg[MAXDATASIZE];
         char usr_msg[MAXDATASIZE];
         fgets(usr_msg, MAXDATASIZE, stdin);
@@ -182,6 +170,6 @@ int main(int argc, char *argv[])
         write(sockfd, client_msg, strlen(client_msg));
     }
     close(sockfd);
-
+    pthread_join(threadargs.thread, NULL);
     return 0;
 }
