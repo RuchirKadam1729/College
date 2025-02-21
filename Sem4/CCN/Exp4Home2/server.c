@@ -76,34 +76,36 @@ void *thread_listener(void *arg)
 
         char *token;
         char *rest;
-        strtok_r(client_msg, ' ', &rest);
-        else if (contains(client_msg, "/list"))
-        {
-            char server_reply[MAXDATASIZE];
-            strcpy(server_reply, "Connected Users: ");
-            for (size_t i = 0; i < MAXDATASIZE; i++)
-            {
-                if (users[i].sockfd != -1)
-                {
-                    char to_append[MAXDATASIZE];
-                    sprintf(to_append, "%s, ", users[i].name);
-                    strcat(server_reply, to_append);
-                }
-            }
-            if (write(sockfd, server_reply, strlen(server_reply)) == -1)
-                perror("write");
-        }
-        else
-        {
-            for (size_t i = 0; i < MAXDATASIZE; i++)
-            {
-                if (users[i].sockfd != -1)
-                {
-                    if (write(users[i].sockfd, client_msg, strlen(client_msg)) == -1)
-                        perror("write");
-                }
-            }
-        }
+		token = strtok_r(client_msg, " ", &rest);
+		
+		write(users[i].sockfd, client_msg, strlen(client_msg));
+		for (int j = 0; j < MAXDATASIZE; j++) {
+			if (users[j].sockfd != -1) {
+				write(users[j].sockfd, client_msg, strlen(client_msg));
+			}
+		}
+		// if (equals(token, "/msg"))
+		// {
+			// token = strtok_r(client_msg, " ", &rest);// on username
+			// for (int i = 0; i < MAXDATASIZE; i++)
+			// {
+				// if (equals(users[i].name, token))
+				// {
+					// write(users[i].sockfd, rest, strlen(rest));
+				// }
+			// }
+			// char server_msg[MAXDATASIZE];
+			// strcpy(server_msg, "no such user");
+			// write(sockfd, server_msg, strlen(server_msg));
+		// }
+		// else {
+			// for (int i = 0; i < MAXDATASIZE; i++) {
+				// if (users[i].sockfd != -1) {
+					// write(users[i].sockfd, client_msg, strlen(client_msg));
+				// }
+			// }
+		// }
+		
     }
     close(sockfd);
     pthread_exit(NULL);
@@ -215,15 +217,14 @@ int main()
             perror("accept");
             continue;
         }
-
-        users[i].sockfd = sockfd;
-
         inet_ntop(their_addr.ss_family,
                   get_in_addr((struct sockaddr *)&their_addr),
                   s, sizeof s);
-        printf("server: got connection from %s\n", s);
-        read(sockfd, users[i].name, MAXDATASIZE);
-        users[i].sockfd = sockfd;
+				  
+	    read(sockfd, users[i].name, MAXDATASIZE);
+		users[i].sockfd = sockfd;
+        printf("server: got connection from %s, %s, sockfd %d\n", users[i].name,s,users[i].sockfd);
+        
         threadargs[i].users = users;
         threadargs[i].i = i;
         threadargs[i].connected_users = &connected_users;
