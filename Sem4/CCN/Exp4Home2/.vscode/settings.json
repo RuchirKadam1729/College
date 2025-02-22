@@ -13,6 +13,10 @@
         "vector": "cpp",
         "string_view": "cpp",
         "span": "cpp",
-        "random": "cpp"
+        "random": "cpp",
+        "stdlib.h": "c",
+        "unistd.h": "c",
+        "errno.h": "c",
+        "pthread.h": "c"
     }
 }

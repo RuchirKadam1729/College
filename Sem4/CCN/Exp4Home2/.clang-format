@@ -1,0 +1,23 @@
+BasedOn: LLVM
+IndentWidth: 4
+AlignConsecutiveAssignments: 
+  Enabled: true
+  Consecutive: true
+  AlignCompound: true
+  PadOperators: true
+  AcrossComments: true
+
+AlignConsecutiveDeclarations: 
+  Enabled: true
+  Consecutive: true
+  AcrossComments: true
+AlignConsecutiveMacros: Consecutive
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterStruct: true
+  AfterFunction: true
+  AfterUnion: true
+
+
+
+

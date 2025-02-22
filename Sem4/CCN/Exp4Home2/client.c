@@ -92,7 +92,7 @@ void *thread_listen(void *arg)
         get_file_content(buf, filename);
         system("clear");
         printf("%s", buf);
-        }
+    }
 }
 
 int getname(char name[])
@@ -129,8 +129,8 @@ int main(int argc, char *argv[])
     }
 
     for (p = servinfo; p != NULL; p = p->ai_next) {
-        if ((sockfd = socket(p->ai_family, p->ai_socktype, p->ai_protocol))
-            == -1) {
+        if ((sockfd = socket(p->ai_family, p->ai_socktype, p->ai_protocol)) ==
+            -1) {
             perror("client: socket");
             continue;
         }
@@ -150,9 +150,8 @@ int main(int argc, char *argv[])
         return 2;
     }
 
-    inet_ntop(
-        p->ai_family, get_in_addr((struct sockaddr *)p->ai_addr), s, sizeof s
-    );
+    inet_ntop(p->ai_family, get_in_addr((struct sockaddr *)p->ai_addr), s,
+              sizeof s);
     printf("client: connecting to %s\n", s);
 
     freeaddrinfo(servinfo);
@@ -164,9 +163,7 @@ int main(int argc, char *argv[])
     pthread_create(&threadargs.thread, NULL, thread_listen, &threadargs);
     while (1) {
         char client_msg[MAXDATASIZE];
-        char usr_msg[MAXDATASIZE];
-        fgets(usr_msg, MAXDATASIZE, stdin);
-        sprintf(client_msg, "[%s]: %s", name, usr_msg);
+        fgets(client_msg, MAXDATASIZE, stdin);
         write(sockfd, client_msg, strlen(client_msg));
     }
     close(sockfd);
