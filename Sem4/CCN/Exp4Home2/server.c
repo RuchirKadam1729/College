@@ -23,12 +23,9 @@
 void sigchld_handler(int s)
 {
     (void)s;
-
     int saved_errno = errno;
-
     while (waitpid(-1, NULL, WNOHANG) > 0)
         ;
-
     errno = saved_errno;
 }
 

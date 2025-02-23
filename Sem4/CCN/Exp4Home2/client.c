@@ -15,34 +15,30 @@
 #define MAXDATASIZE 1000
 
 // utility
-int strlen_newline(char *str)
-{
+int strlen_newline(char *str) {
     int len = 0;
     while (str[len] != '\n' && str[len] != '\0') {
         len++;
     }
     return len;
 }
-void *get_in_addr(struct sockaddr *sa)
-{
+void *get_in_addr(struct sockaddr *sa) {
     if (sa->sa_family == AF_INET)
         return &(((struct sockaddr_in *)sa)->sin_addr);
 
     return &(((struct sockaddr_in6 *)sa)->sin6_addr);
 }
 
-void write_to_file(const char *filename, const char *str)
-{
+void write_to_file(const char *filename, const char *str) {
     FILE *client_convo_file = fopen(filename, "a");
     fputs(str, client_convo_file);
     fclose(client_convo_file);
 }
 
-void get_file_content(char *buf, const char *filename)
-{
-    char  raw_buf[MAXDATASIZE];
+void get_file_content(char *buf, const char *filename) {
+    char raw_buf[MAXDATASIZE];
     FILE *client_convo_file = fopen(filename, "r");
-    int   j                 = 0;
+    int j = 0;
     while (fgets(raw_buf, MAXDATASIZE, client_convo_file)) {
         int i = 0;
 
@@ -61,24 +57,23 @@ void get_file_content(char *buf, const char *filename)
     fclose(client_convo_file);
 }
 
-struct threadargs
-{
+struct threadargs {
     pthread_t thread;
-    int       sockfd;
-    char     *name;
+    int sockfd;
+    char *name;
 };
 
-void *thread_listen(void *arg)
-{
+void *thread_listen(void *arg) {
     struct threadargs threadargs = *(struct threadargs *)arg;
 
     int sockfd = threadargs.sockfd;
 
     char filename[100];
+    mkdir("convos");
     sprintf(filename, "convos/%s%s", threadargs.name, PORT);
 
     while (1) {
-        int  numbytes;
+        int numbytes;
         char server_msg[MAXDATASIZE];
 
         memset(server_msg, 0, MAXDATASIZE);
@@ -95,24 +90,22 @@ void *thread_listen(void *arg)
     }
 }
 
-int getname(char name[])
-{
+int getname(char name[]) {
     printf("Enter username: ");
     fgets(name, 100, stdin);
     name[strlen_newline(name)] = '\0';
     return strlen_newline(name);
 }
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
     char name[100];
     getname(name);
 
     int sockfd;
 
     struct addrinfo hints, *servinfo, *p;
-    int             rv;
-    char            s[INET6_ADDRSTRLEN];
+    int rv;
+    char s[INET6_ADDRSTRLEN];
 
     if (argc != 2) {
         fprintf(stderr, "usage: client hostname\n");
@@ -120,7 +113,7 @@ int main(int argc, char *argv[])
     }
 
     memset(&hints, 0, sizeof hints);
-    hints.ai_family   = AF_UNSPEC;
+    hints.ai_family = AF_UNSPEC;
     hints.ai_socktype = SOCK_STREAM;
 
     if ((rv = getaddrinfo(argv[1], PORT, &hints, &servinfo)) != 0) {
@@ -159,7 +152,7 @@ int main(int argc, char *argv[])
     write(sockfd, name, strlen(name));
     struct threadargs threadargs;
     threadargs.sockfd = sockfd;
-    threadargs.name   = name;
+    threadargs.name = name;
     pthread_create(&threadargs.thread, NULL, thread_listen, &threadargs);
     while (1) {
         char client_msg[MAXDATASIZE];
